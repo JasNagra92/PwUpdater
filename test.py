@@ -6,7 +6,7 @@ from selenium.webdriver.common.keys import Keys
 
 driver = webdriver.Chrome()
 
-password_change_url = "https://www.pwchange.gov.bc.ca/"
+password_change_url = "http://localhost:8080"
 
 excel_file = "testSheet.xlsx"
 sheet_name = "Sheet1"
