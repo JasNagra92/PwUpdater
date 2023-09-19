@@ -1,24 +1,26 @@
 import time
 import openpyxl
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 driver = webdriver.Chrome()
 
 password_change_url = "http://localhost:8080"
 
-excel_file = "testSheet.xlsx"
+excel_file = "IDIR_usernames.xlsx"
 sheet_name = "Sheet1"
 
 wb = openpyxl.load_workbook(excel_file)
 sheet = wb[sheet_name]
 
-column_letter = "C"
-username = "jasnagra"
+column_letter = "A"
+password = "Wildfire.2023"
 
-start_row = 4
-end_row = 7
+start_row = 2
+end_row = 22
 
 try:
     for row_num in range(start_row, end_row + 1):
@@ -27,55 +29,73 @@ try:
         print(cell_value)
 
         if cell_value is not None:
-            password = cell_value
+            username = cell_value
 
             driver.get(password_change_url)
 
-            time.sleep(2)
+            wait = WebDriverWait(driver, 6)
 
-            username_field = driver.find_element(By.ID, "user")
-            password_field = driver.find_element(By.ID, "password")
-            login_button = driver.find_element(By.NAME, "btnSubmit")
+            username_field = wait.until(EC.element_to_be_clickable((By.ID, "user")))
+            password_field = wait.until(EC.element_to_be_clickable((By.ID, "password")))
+            login_button = wait.until(
+                EC.element_to_be_clickable((By.NAME, "btnSubmit"))
+            )
 
             username_field.send_keys(username)
-            password_field.send_keys(password)
+            password_field.send_keys("Blizzard.2023")
 
             login_button.click()
 
-            time.sleep(3)
-
-            second_page_username_field = driver.find_element(
-                By.ID,
-                "ctl00_mainContent_ChangePassword1_ChangePasswordContainerID_UserName",
-            )
-            current_password_field = driver.find_element(
-                By.ID,
-                "ctl00_mainContent_ChangePassword1_ChangePasswordContainerID_CurrentPassword",
-            )
-            new_password_field = driver.find_element(
-                By.ID,
-                "ctl00_mainContent_ChangePassword1_ChangePasswordContainerID_NewPassword",
-            )
-            confirm_new_password_field = driver.find_element(
-                By.ID,
-                "ctl00_mainContent_ChangePassword1_ChangePasswordContainerID_ConfirmNewPassword",
+            second_page_username_field = wait.until(
+                EC.presence_of_element_located(
+                    (
+                        By.ID,
+                        "ctl00_mainContent_ChangePassword1_ChangePasswordContainerID_UserName",
+                    )
+                )
             )
 
-            next_row_num = row_num + 1
-            new_password = sheet[f"{column_letter}{next_row_num}"].value
+            current_password_field = wait.until(
+                EC.presence_of_element_located(
+                    (
+                        By.ID,
+                        "ctl00_mainContent_ChangePassword1_ChangePasswordContainerID_CurrentPassword",
+                    )
+                )
+            )
+            new_password_field = wait.until(
+                EC.presence_of_element_located(
+                    (
+                        By.ID,
+                        "ctl00_mainContent_ChangePassword1_ChangePasswordContainerID_NewPassword",
+                    )
+                )
+            )
+            confirm_new_password_field = wait.until(
+                EC.presence_of_element_located(
+                    (
+                        By.ID,
+                        "ctl00_mainContent_ChangePassword1_ChangePasswordContainerID_ConfirmNewPassword",
+                    )
+                )
+            )
+
+            new_password = "Blizzard.2023"
 
             second_page_username_field.send_keys(username)
             current_password_field.send_keys(password)
             new_password_field.send_keys(new_password)
             confirm_new_password_field.send_keys(new_password)
 
-            change_password_button = driver.find_element(
-                By.ID,
-                "ctl00_mainContent_ChangePassword1_ChangePasswordContainerID_ChangePasswordPushButton",
+            change_password_button = wait.until(
+                EC.presence_of_element_located(
+                    (
+                        By.ID,
+                        "ctl00_mainContent_ChangePassword1_ChangePasswordContainerID_ChangePasswordPushButton",
+                    )
+                )
             )
             change_password_button.click()
-
-            time.sleep(3)
 
             driver.delete_all_cookies()
             print(f"Finished processing {row_num}")
