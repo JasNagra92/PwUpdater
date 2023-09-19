@@ -18,6 +18,7 @@ sheet = wb[sheet_name]
 
 column_letter = "A"
 password = "Wildfire.2023"
+new_password = "Blizzard.2023"
 
 start_row = 2
 end_row = 22
@@ -42,7 +43,7 @@ try:
             )
 
             username_field.send_keys(username)
-            password_field.send_keys("Blizzard.2023")
+            password_field.send_keys(password)
 
             login_button.click()
 
@@ -79,8 +80,6 @@ try:
                     )
                 )
             )
-
-            new_password = "Blizzard.2023"
 
             second_page_username_field.send_keys(username)
             current_password_field.send_keys(password)
